@@ -1,4 +1,4 @@
-# Adopting the mcp-release-guardian Governance Template
+# Adopting the mcp-policy-guardian Governance Template
 
 This template is a proven “minimum viable governance” scaffold for deterministic MCP servers.
 

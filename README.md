@@ -1,6 +1,6 @@
-# mcp-release-guardian
+# mcp-policy-guardian
 
-[![PyPI](https://img.shields.io/pypi/v/mcp-release-guardian.svg)](https://pypi.org/project/mcp-release-guardian/) [![Python](https://img.shields.io/pypi/pyversions/mcp-release-guardian.svg)](https://pypi.org/project/mcp-release-guardian/) [![CI](https://github.com/curtis-d-williams/mcp-release-guardian/actions/workflows/ci.yml/badge.svg)](https://github.com/curtis-d-williams/mcp-release-guardian/actions/workflows/ci.yml) [![PyPI install smoke](https://github.com/curtis-d-williams/mcp-release-guardian/actions/workflows/pypi-install-smoke.yml/badge.svg)](https://github.com/curtis-d-williams/mcp-release-guardian/actions/workflows/pypi-install-smoke.yml)
+[![PyPI](https://img.shields.io/pypi/v/mcp-policy-guardian.svg)](https://pypi.org/project/mcp-policy-guardian/) [![Python](https://img.shields.io/pypi/pyversions/mcp-policy-guardian.svg)](https://pypi.org/project/mcp-policy-guardian/) [![CI](https://github.com/curtis-d-williams/mcp-policy-guardian/actions/workflows/ci.yml/badge.svg)](https://github.com/curtis-d-williams/mcp-policy-guardian/actions/workflows/ci.yml) [![PyPI install smoke](https://github.com/curtis-d-williams/mcp-policy-guardian/actions/workflows/pypi-install-smoke.yml/badge.svg)](https://github.com/curtis-d-williams/mcp-policy-guardian/actions/workflows/pypi-install-smoke.yml)
 
 
 Deterministic MCP server for validating release hygiene in local repositories. Network-free, read-only, governance-grade outputs.
@@ -11,7 +11,7 @@ Deterministic MCP server for validating release hygiene in local repositories. N
 
 ## Release Discipline & Guarantees
 
-`mcp-release-guardian` is intentionally minimal and governance-oriented.
+`mcp-policy-guardian` is intentionally minimal and governance-oriented.
 
 **Contract stability**
 - V1 tool schemas are frozen.
@@ -34,7 +34,7 @@ See [`docs/V1_CONTRACT.md`](docs/V1_CONTRACT.md) for the authoritative contract.
 
 ## Overview
 
-`mcp-release-guardian` exposes three tools via the [Model Context Protocol](https://modelcontextprotocol.io/):
+`mcp-policy-guardian` exposes three tools via the [Model Context Protocol](https://modelcontextprotocol.io/):
 
 | Tool | What it does |
 |------|-------------|
@@ -54,19 +54,19 @@ All tools are:
 ### Install
 
 ```bash
-pip install mcp-release-guardian
+pip install mcp-policy-guardian
 ```
 
 Or with [uv](https://github.com/astral-sh/uv):
 
 ```bash
-uv tool install mcp-release-guardian
+uv tool install mcp-policy-guardian
 ```
 
 ### Run the server manually
 
 ```bash
-mcp-release-guardian
+mcp-policy-guardian
 ```
 
 The server starts on **stdio** and waits for MCP messages.
@@ -81,8 +81,8 @@ Add the following block to your `claude_desktop_config.json`
 ```json
 {
   "mcpServers": {
-    "mcp-release-guardian": {
-      "command": "mcp-release-guardian",
+    "mcp-policy-guardian": {
+      "command": "mcp-policy-guardian",
       "args": []
     }
   }
@@ -94,9 +94,9 @@ If you installed with `uv tool`:
 ```json
 {
   "mcpServers": {
-    "mcp-release-guardian": {
+    "mcp-policy-guardian": {
       "command": "uvx",
-      "args": ["mcp-release-guardian"]
+      "args": ["mcp-policy-guardian"]
     }
   }
 }
@@ -228,8 +228,8 @@ Example response:
 ## Development
 
 ```bash
-git clone https://github.com/YOUR_ORG/mcp-release-guardian.git
-cd mcp-release-guardian
+git clone https://github.com/YOUR_ORG/mcp-policy-guardian.git
+cd mcp-policy-guardian
 pip install -e .
 pytest -q
 ```

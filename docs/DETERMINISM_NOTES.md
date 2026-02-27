@@ -1,13 +1,13 @@
 # Determinism Notes
 
-This document explains the design constraints that make `mcp-release-guardian`
+This document explains the design constraints that make `mcp-policy-guardian`
 deterministic, provider-free, and fail-closed.
 
 ---
 
 ## Design boundary
 
-`mcp-release-guardian` operates exclusively inside a single well-defined
+`mcp-policy-guardian` operates exclusively inside a single well-defined
 boundary:
 
 ```
