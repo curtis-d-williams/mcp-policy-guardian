@@ -1,92 +1,155 @@
-V1 Tool Contract (Authoritative, Frozen)
+# mcp-policy-guardian — V1 Contract (Frozen)
 
-Tool 1: check_repo_hygiene
-Purpose: Validate that a repo contains the minimum "release hygiene" artifacts.
+Status: V1 frozen (effective at tag v0.1.0)
 
-Input schema (frozen):
-{
-  "repo_path": "string"
-}
+This document defines the V1 contract for the mcp-policy-guardian MCP server.
+V1 is intentionally narrow: it is a deterministic, network-free, read-only governance primitive for presence-only repository policy artifacts.
 
-Output schema (frozen):
-{
-  "tool": "check_repo_hygiene",
-  "repo_path": "string",
-  "ok": "boolean",
-  "checks": [
-    {
-      "check_id": "string",
-      "ok": "boolean",
-      "details": "string"
-    }
-  ],
-  "fail_closed": "boolean"
-}
+---
 
-Checks to include (V1):
-* pyproject.toml present OR setup.cfg present OR setup.py present
-* LICENSE present
-* README present
-* .github/ISSUE_TEMPLATE/bug_report.yml present
-* .github/workflows/ exists (presence only, no CI API calls)
-* docs/V1_CONTRACT.md present (in this repo) — for self-hygiene
-* docs/DETERMINISM_NOTES.md present (in this repo) — for self-hygiene
+## 1. Tool Surface (V1)
 
-Tool 2: check_version_alignment
-Purpose: Check that local version metadata matches a git tag (when provided) or provide version metadata deterministically.
+V1 exposes exactly one tool:
 
-Input schema (frozen):
-{
-  "repo_path": "string",
-  "expected_tag": "string (optional, e.g. v0.2.2)"
-}
+check_repo_policy(repo_path: string) -> object
 
-Output schema (frozen):
-{
-  "tool": "check_version_alignment",
-  "repo_path": "string",
-  "ok": "boolean",
-  "expected_tag": "string|null",
-  "detected": {
-    "version": "string|null",
-    "source": "string|null"
-  },
-  "details": "string",
-  "fail_closed": "boolean"
-}
+No other tools are part of V1.
 
-Rules (V1):
-* Read version from pyproject.toml [project].version if present.
-* If absent, set detected.version=null and fail-closed.
-* If expected_tag provided, normalize by stripping leading v for comparison.
+---
 
-Tool 3: generate_release_checklist
-Purpose: Deterministically generate a release checklist for a repo, based on local state.
+## 2. V1 Scope (Hard Boundary)
 
-Input schema (frozen):
-{
-  "repo_path": "string",
-  "target_tag": "string"
-}
+### 2.1 What V1 does
 
-Output schema (frozen):
-{
-  "tool": "generate_release_checklist",
-  "repo_path": "string",
-  "target_tag": "string",
-  "checklist_markdown": "string",
-  "inputs_used": {
-    "detected_version": "string|null",
-    "has_ci_workflows": "boolean",
-    "has_bug_template": "boolean"
-  },
-  "fail_closed": "boolean"
-}
+check_repo_policy(repo_path) checks presence only of the following paths:
 
-Checklist content must include:
-* version alignment step
-* test run step (pytest -q if present, else "run repo tests")
-* tag step (manual instruction)
-* release notes step
-* verify adoption hooks step (pinned issues + bug form)
-No network calls.
+1. LICENSE
+2. README.md
+3. SECURITY.md
+4. CONTRIBUTING.md
+5. .github/CODEOWNERS
+
+It returns a deterministic JSON object containing:
+
+- tool name
+- repo_path (echoed input)
+- ok (boolean)
+- checks (array)
+- fail_closed (boolean)
+
+### 2.2 What V1 does NOT do (Non-Goals)
+
+V1 does not perform:
+
+- semantic validation of file contents
+- policy quality checks
+- linting of content or structure
+- SPDX/license-type detection
+- scoring, grading, or maturity models
+- recommendations or remediation guidance
+- heuristics or inference
+- GitHub API calls
+- network access of any kind
+- branch protection checks
+
+If a capability is not explicitly listed in “What V1 does,” it is out of scope.
+
+---
+
+## 3. Determinism and Fail-Closed Semantics
+
+### 3.1 Determinism Requirements
+
+For identical filesystem state at repo_path, output must be identical:
+
+- stable keys and types
+- stable ordering of checks
+- stable check_id values
+- stable details strings
+- no timestamps
+- no randomness
+- no environment-dependent text
+
+### 3.2 Network-Free and Read-Only
+
+The tool must:
+
+- make no network calls
+- not modify repository files
+- not write to disk
+- not execute repository code
+
+### 3.3 Fail-Closed Definition
+
+If repo_path is invalid, unreadable, or not a directory:
+
+- ok MUST be false
+- fail_closed MUST be true
+- every check MUST have ok: false
+- details MUST be "fail-closed: repo_path_invalid"
+
+If the repository is readable:
+
+- each check is true if and only if the file exists
+- ok = logical AND of all checks
+- fail_closed = not ok
+
+---
+
+## 4. Output Schema (V1)
+
+Top-level JSON object MUST contain exactly:
+
+- tool (string) — always "check_repo_policy"
+- repo_path (string)
+- ok (boolean)
+- checks (array)
+- fail_closed (boolean)
+
+No additional top-level keys are allowed in V1.
+
+Each checks item MUST contain exactly:
+
+- check_id (string)
+- ok (boolean)
+- details (string)
+
+### 4.1 Check Ordering (Frozen)
+
+The checks array MUST appear in this exact order:
+
+1. license_present
+2. readme_present
+3. security_present
+4. contributing_present
+5. codeowners_present
+
+### 4.2 Canonical Check IDs (Frozen)
+
+- license_present
+- readme_present
+- security_present
+- contributing_present
+- codeowners_present
+
+---
+
+## 5. Backward Compatibility Rule
+
+After tag v0.1.0:
+
+- No changes to tool name or signature
+- No new tools
+- No changes to top-level keys
+- No reordering of checks
+- No changes to check_id values
+- No new required files
+- No semantic validation added under existing checks
+
+Any violation of these rules requires a new major version (V2) and a new contract document.
+
+---
+
+## 6. Canonical Examples
+
+Canonical outputs are defined in docs/EXAMPLE_OUTPUTS.md and are part of the V1 contract.
