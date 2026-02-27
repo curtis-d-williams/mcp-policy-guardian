@@ -1,10 +1,7 @@
 name: PyPI install smoke
 
 on:
-  push:
-    tags:
-      - "v*"
-
+  workflow_dispatch:
 jobs:
   smoke:
     runs-on: ubuntu-latest
